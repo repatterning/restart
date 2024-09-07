@@ -29,5 +29,5 @@ class Config:
         # Devices in focus, via their sequence identifiers
         # pollutant: Nitrogen Dioxide
         # area: Edinburgh
-        # sequence (station): 155 (901), 531 (1014), 177 (460), 150 (791), 165(327), 142 (196)
-        self.sequence_id_filter = [155, 531, 177, 150, 165, 142]
+        # sequence (station): 155 (901), 531 (1014), 177 (460), 150 (791)
+        self.sequence_id_filter = [155, 531, 177, 150]
