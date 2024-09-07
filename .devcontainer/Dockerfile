@@ -5,7 +5,7 @@ FROM python:3.12.5-bookworm
 # file of each step separately; and RUN the file immediately after COPY
 WORKDIR /app
 
-COPY requirements.txt /app
+COPY /.devcontainer/requirements.txt /app
 RUN pip install --upgrade pip && \
     pip install --requirement /app/requirements.txt --no-cache-dir
 
