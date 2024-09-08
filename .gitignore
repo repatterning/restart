@@ -129,7 +129,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-secrets
+.iac/secrets
 
 # Spyder project settings
 .spyderproject
