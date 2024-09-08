@@ -1,0 +1,12 @@
+{
+  "tags": [
+    {
+      "Key": "description",
+      "Value": "A repository for the cloud platform investigation images."
+    },
+    {
+      "Key": "usage",
+      "Value": "Read the usage notes of each image within its GitHub repository."
+    }
+  ]
+}

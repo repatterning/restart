@@ -1,0 +1,11 @@
+#!/bin/bash
+
+: '
+Creates an Amazon ECR repository within a private registry
+'
+
+repository=
+region=
+
+aws ecr create-repository --repository-name $repository  --region $region \
+  --cli-input-json file://.iac/ecr/registry.json

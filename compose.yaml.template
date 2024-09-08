@@ -1,0 +1,14 @@
+services:
+  app:
+    image: ghcr.io/enqueter/pollutants:develop
+    ports:
+      - 127.0.0.1:3000:3000
+    working_dir: /app
+    volumes:
+      - warehouse:/app/warehouse
+      - ~/.aws:/home/reader/.aws:readonly
+    environment:
+      - AWS_CONFIG_FILE=/home/reader/.aws/config
+      - AWS_SSO_SESSION={sso_session}
+volumes:
+  warehouse:

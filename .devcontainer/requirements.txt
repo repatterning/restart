@@ -1,0 +1,17 @@
+dask[complete]>=2024.7.1
+dask-expr
+graphviz
+boto3
+botocore
+s3fs>=2024.6.1
+scikit-learn
+numpy>1.26
+pandas>2.2
+scipy>1.11
+requests>=2.31.0
+PyYAML
+pytest
+coverage
+pytest-cov
+pylint
+flake8
