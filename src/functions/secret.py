@@ -49,11 +49,12 @@ class Secret:
 
         return secret_value['SecretString']
 
-    def exc(self, secret_id: str) -> str:
+    def exc(self, secret_id: str, node: str = None) -> str:
         """
         Gets the value of a secret key.
 
         :param secret_id: The identification code of the secret
+        :param node: A child element
 
         Returns:
             _type_: str
@@ -62,4 +63,7 @@ class Secret:
         expression = self.__get__value(secret_id=secret_id)
         dictionary: dict = json.loads(expression)
 
-        return dictionary[secret_id]
+        if node is None:
+            return dictionary[secret_id]
+
+        return dictionary[node]
