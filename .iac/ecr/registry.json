@@ -6,7 +6,7 @@
     },
     {
       "Key": "usage",
-      "Value": "Read the notes of each image's GitHub repository."
+      "Value": "Read the usage notes of each image within its GitHub repository."
     }
   ]
 }
