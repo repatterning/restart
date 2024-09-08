@@ -8,6 +8,28 @@ The script [registry.sh.template](registry.sh.template) outlines the [creation o
 bash .iac/ecr/registry.sh
 ```
 
+If successful, the terminal output pattern is
+
+```json
+{
+    "repository": {
+        "repositoryArn": "arn:aws:ecr:{region.code}:{account.identifier}:repository/{repository.name}",
+        "registryId": "{account.identifier}",
+        "repositoryName": "{repository.name}",
+        "repositoryUri": "{account.identifier}.dkr.ecr.{region.code}.amazonaws.com/{repository.name}",
+        "createdAt": "2024-09-08T02:37:57.880000+01:00",
+        "imageTagMutability": "MUTABLE",
+        "imageScanningConfiguration": {
+            "scanOnPush": false
+        },
+        "encryptionConfiguration": {
+            "encryptionType": "{encryption.type}"
+        }
+    }
+}
+```
+
+
 Repository [deletion](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecr/delete-repository.html):
 
 ```shell
