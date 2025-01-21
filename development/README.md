@@ -1,174 +1,146 @@
 <br>
 
-**Development Notes**
+## Development Environment
+
+### Remote Development
+
+For this Python project/template, the remote development environment requires
+
+* [Dockerfile](../.devcontainer/Dockerfile)
+* [requirements.txt](../.devcontainer/requirements.txt)
+
+An image is built via the command
+
+```shell
+docker build . --file .devcontainer/Dockerfile -t points
+```
+
+On success, the output of
+
+```shell
+docker images
+```
+
+should include
 
 <br>
 
-* [Remote & Local Environments](#remote--local-environments)
-  * [Remote](#remote) 
-  * [Local](#local)
-* [GitHub Actions](#github-actions)
-  * [Code Analysis](#code-analysis)
-  * [Container Registry Packages](#container-registry-packages)
-* [Testing Images Containers](#testing-image-containers)
-  * [Locally](#locally)
-  * [Via Amazon EC2 (Elastic Compute Cloud)](#via-amazon-ec2-elastic-compute-cloud)
-* [References](#references)
+| repository | tag    | image id | created  | size     |
+|:-----------|:-------|:---------|:---------|:---------|
+| points     | latest | $\ldots$ | $\ldots$ | $\ldots$ |
+
 
 <br>
 
-## Remote & Local Environments
+Subsequently, run a container, i.e., an instance, of the image `points` via:
 
-### Remote
-
-The remote environment's image is built via
+<br>
 
 ```shell
-docker build . --file .devcontainer/Dockerfile -t pollutants
+docker run --rm --gpus all -i -t -p 8050:8050 
+  -w /app --mount type=bind,src="$(pwd)",target=/app 
+    -v ~/.aws:/root/.aws points
 ```
 
-This names the new image `pollutants`.  Subsequently, a container/instance of the image `pollutants` is set up via:
+<br>
 
-```shell
-docker run --rm -i -t -p 127.0.0.1:10000:8888 -w /app
-  --mount type=bind,src="$(pwd)",target=/app -v ~/.aws:/root/.aws pollutants
-```
+Herein, `-p 8050:8050` maps the host port `8050` to container port `8050`.  Note, the container's working environment, i.e., -w, must be inline with this project's top directory.  Additionally
 
-wherein
+* --rm: [automatically remove container](https://docs.docker.com/engine/reference/commandline/run/#:~:text=a%20container%20exits-,%2D%2Drm,-Automatically%20remove%20the)
+* -i: [interact](https://docs.docker.com/engine/reference/commandline/run/#:~:text=and%20reaps%20processes-,%2D%2Dinteractive,-%2C%20%2Di)
+* -t: [tag](https://docs.docker.com/get-started/02_our_app/#:~:text=Finally%2C%20the-,%2Dt,-flag%20tags%20your)
+* -p: [publish a container's ports to its host](https://docs.docker.com/engine/reference/commandline/run/#:~:text=%2D%2Dpublish%20%2C-,%2Dp,-Publish%20a%20container%E2%80%99s)
 
-<ul>
-  <li>--rm: <a href="https://docs.docker.com/engine/reference/commandline/run/#:~:text=a%20container%20exits-,%2D%2Drm,-Automatically%20remove%20the" target="_blank">automatically remove container</a></li>
-  <li>-i: <a href="https://docs.docker.com/engine/reference/commandline/run/#:~:text=and%20reaps%20processes-,%2D%2Dinteractive,-%2C%20%2Di" target="_blank">interact</a></li>
-  <li>-t: <a href="https://docs.docker.com/get-started/02_our_app/#:~:text=Finally%2C%20the-,%2Dt,-flag%20tags%20your" target="_blank">tag</a></li>
-  <li>-p: <a href="https://docs.docker.com/engine/reference/commandline/run/#:~:text=%2D%2Dpublish%20%2C-,%2Dp,-Publish%20a%20container%E2%80%99s" target="_blank">publish a container's port to a host port</a></li>
-</ul>
+<br>
 
-and `-p 10000:8888` maps the host port `10000` to container port `8888`.  Note, the container's working environment, i.e., `-w`, must be inline with this project's top directory.   The section `-v ~/.aws:/root/.aws` is important for interactions with Amazon Web Services.  Note, **never deploy a root container, i.e., a container with root settings, study the production** [Dockerfile](/Dockerfile).  Get the name of the running instance ``pollutants`` via:
+The part `-v ~/.aws:/root/.aws` ascertains Amazon Web Services interactions via remote development, i.e., via containers.  Get the name of the running instance of ``points`` via:
 
 ```shell
 docker ps --all
 ```
 
-A developer may attach an IDE (independent development environment) application to a running container.  The IntelliJ 
-IDEA instructions are:
+**Never deploy a root container, study the production** [Dockerfile](/Dockerfile); cf. [`.devcontainer/Dockerfile`](../.devcontainer/Dockerfile).
 
-> Connect to the Docker [daemon](https://www.jetbrains.com/help/idea/docker.html#connect_to_docker)
-> * **Settings** $\rightarrow$ **Build, Execution, Deployment** $\rightarrow$ **Docker** $\rightarrow$ **WSL:** `operating system`
+<br>
+
+### Remote Development & Integrated Development Environments
+
+An IDE (integrated development environment) is a helpful remote development tool.  The **IntelliJ
+IDEA** set up involves connecting to a machine's Docker [daemon](https://www.jetbrains.com/help/idea/docker.html#connect_to_docker), the steps are
+
+<br>
+
+> * **Settings** $\rightarrow$ **Build, Execution, Deployment** $\rightarrow$ **Docker** $\rightarrow$ **WSL:** {select the linux operating system}
 > * **View** $\rightarrow$ **Tool Window** $\rightarrow$ **Services** <br>Within the **Containers** section connect to the running instance of interest, or ascertain connection to the running instance of interest.
 
-Visual Studio Code has its container attachment instructions; study [Attach Container](https://code.visualstudio.com/docs/devcontainers/attach-container).
-
 <br>
 
-### Local
+**Visual Studio Code** has its container attachment instructions; study [Attach Container](https://code.visualstudio.com/docs/devcontainers/attach-container).
 
-For temporary explorations via a local environment, first update your machine's base `conda` environment, i.e.,
-
-```shell
-conda update -n base -c anaconda conda
-```
-
-Subsequently, build a local virtual environment via the command
-
-```shell
-conda env create --file environment.yml -p /opt/miniconda3/envs/pollutants
-```
-
-Herein, **environment.yml** uses the same **requirements.txt** as [Dockerfile](/.devcontainer/Dockerfile).  If the 
-environment exists, i.e., if the aim is to replace an existing environment, initially run
-
-```shell
-conda env remove --name pollutants
-```
 
 <br>
 <br>
 
-## GitHub Actions
 
-<span style="margin-bottom: 25px"><b>Integration, Delivery, Deployment</b></span>
+## Code Analysis
 
-The project uses GitHub Actions for a variety of code analysis, and to automatically deliver images to container registries.
+The GitHub Actions script [main.yml](../.github/workflows/main.yml) conducts code analysis within a Cloud GitHub Workspace.  Depending on the script, code analysis may occur `on push` to any repository branch, or `on push` to a specific branch.
 
-### Code Analysis
+The sections herein outline remote code analysis.
 
-Study the code analysis steps outlined in [`.github/workflows/main.yml`](/.github/workflows/main.yml).  The steps therein 
-mimic local code analysis steps.  For example, 
+### pylint
 
-```shell
-python -m pylint --rcfile .pylintrc ...
-```
-
-will analyse a program or set of programs; depending on the ellipsis replacement. Note, the directive below generates the 
-dotfile `.pylintrc` of the static code analyser [pylint](https://pylint.pycqa.org/en/latest/user_guide/checkers/features.html).
+The directive
 
 ```shell
 pylint --generate-rcfile > .pylintrc
 ```
 
-<br>
-
-### Container Registry Packages
-
-The **packages** section of [main.yml](/.github/workflows/main.yml) is for GitHub Container Registry (GCR) container 
-registration.  Beware of errors due to:
-
-
-> **Case** _permission denied_ $\rightarrow$ the **packages** section of [main.yml](/.github/workflows/main.yml) is probably 
-missing:
-
-```yaml
-permissions:
-  contents: read
-  packages: write
-```
-
-> **Case** _the image does not exist locally_ $\rightarrow$ the **packages** section of [main.yml](/.github/workflows/main.yml) is probably
-missing:
-
-```yaml
-docker build . --file Dockerfile --tag ...
-```
-
-<br>
-
-The **ecr** section of [main.yml](/.github/workflows/main.yml) is for Amazon Elastic Container Registry (ECR) container 
-registration.
-
-<br>
-<br>
-
-
-## Testing Image Containers
-
-### Locally
-
-The image's programs interact with Amazon services therefore an image container will require Amazon credentials.  Hence, 
-a testing option is a `compose.yaml`; a `compose.yaml` of the form [compose.yaml.template](/compose.yaml.template), 
-**explanatory notes upcoming**.  Subsequently, within the directory hosting `compose.yaml`
+generates the dotfile `.pylintrc` of the static code analyser [pylint](https://pylint.pycqa.org/en/latest/user_guide/checkers/features.html).  Analyse a directory via the command
 
 ```shell
- docker pull ghcr.io/enqueter/pollutants:develop
- docker compose up -d
+python -m pylint --rcfile .pylintrc {directory}
 ```
 
-If any problems arise
+The `.pylintrc` file of this template project has been **amended to adhere to team norms**, including
 
-```shell
-docker compose logs -f
-```
+* Maximum number of characters on a single line.
+  > max-line-length=127
+
+* Maximum number of lines in a module.
+  > max-module-lines=135
+
 
 <br>
 
-### Via Amazon EC2 (Elastic Compute Cloud)
+### pytest & pytest coverage
 
-If the EC2 is launched with the appropriate instance profile policies for interacting with relevant Amazon services, then 
-testing is straightforward.
+The directive patterns
 
 ```shell
-docker pull ghcr.io/enqueter/pollutants:develop
-docker run ghcr.io/enqueter/pollutants:develop
+python -m pytest tests/{directory.name}/...py
+pytest --cov-report term-missing  --cov src/{directory.name}/...py tests/{directory.name}/...py
 ```
+
+for test and test coverage, respectively.
+
+<br>
+
+### flake8
+
+For code & complexity analysis.  A directive of the form
+
+```bash
+python -m flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/...
+```
+
+inspects issues in relation to logic (F7), syntax (Python E9, Flake F7), mathematical formulae symbols (F63), undefined variable names (F82).  Additionally
+
+```shell
+python -m flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/...
+```
+
+inspects complexity.
 
 <br>
 <br>
