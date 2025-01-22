@@ -2,7 +2,6 @@
 Module config
 """
 import os
-import datetime
 
 
 class Config:
