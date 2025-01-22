@@ -43,9 +43,12 @@ class Rating:
 
         return data[self.__fields]
 
-    def __anomalies(self):
+    def __anomalies(self, blob: pd.DataFrame) -> pd.DataFrame:
 
+        blob = blob.assign(code=blob['key'].astype(str).map(self.__code))
+        blob = blob.assign(description=blob['description'].astype(str).map(self.__description))
 
+        return blob
 
     def exc(self):
         """
@@ -56,3 +59,5 @@ class Rating:
         objects = src.functions.objects.Objects()
         values = objects.api(url=self.__url)
         logging.info('RATING:\n%s', values)
+
+        self.__structure(values=values)
