@@ -1,9 +1,13 @@
 """Module rating.py"""
 import logging
+import os
 
 import pandas as pd
 
+import config
+import src.functions.directories
 import src.functions.objects
+import src.functions.streams
 
 
 class Rating:
@@ -43,14 +47,20 @@ class Rating:
 
         return data[self.__fields]
 
-    def __anomalies(self, blob: pd.DataFrame) -> pd.DataFrame:
+    def __anomalies(self, data: pd.DataFrame) -> pd.DataFrame:
+        """
 
-        blob = blob.assign(code=blob['key'].astype(str).map(self.__code))
-        blob = blob.assign(description=blob['description'].astype(str).map(self.__description))
+        :param data:
+        :return:
+        """
 
-        return blob
+        frame = data.copy()
+        frame = frame.assign(code=frame['key'].astype(str).map(self.__code))
+        frame = frame.assign(description=frame['description'].astype(str).map(self.__description))
 
-    def exc(self):
+        return frame
+
+    def exc(self) -> pd.DataFrame:
         """
 
         :return:
@@ -58,6 +68,10 @@ class Rating:
 
         objects = src.functions.objects.Objects()
         values = objects.api(url=self.__url)
-        logging.info('RATING:\n%s', values)
+        logging.info(values)
 
-        self.__structure(values=values)
+        data = self.__structure(values=values)
+        data = self.__anomalies(data=data.copy())
+        logging.info(data)
+
+        return data
