@@ -9,7 +9,8 @@ class Rating:
     <b>Notes</b><br>
     ------<br>
 
-    The types of quality ratings of a measurement.<br>
+    The <a href="https://timeseriesdoc.sepa.org.uk/api-documentation/before-you-start/how-data-validity-may-change/">
+    quality rating</a> of a measurement.<br>
     """
 
     def __init__(self):
@@ -19,6 +20,8 @@ class Rating:
 
         self.__url = ('https://timeseries.sepa.org.uk/KiWIS/KiWIS?service=kisters&type=queryServices'
                       '&request=getQualityCodes&datasource=0&format=json')
+
+        self.__code = {'50': 'G', '100': 'E', '140': 'PROV', '150': 'S', '200': 'V', '254': 'U'}
 
     def exc(self):
         """
