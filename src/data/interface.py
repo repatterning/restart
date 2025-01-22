@@ -1,5 +1,7 @@
 """Module interface.py"""
 import logging
+import os.path
+
 import pandas as pd
 
 import config
@@ -9,6 +11,7 @@ import src.data.partitions
 import src.data.points
 import src.data.rating
 import src.data.stations
+import src.functions.directories
 import src.functions.streams
 
 
@@ -24,15 +27,23 @@ class Interface:
 
         self.__configurations = config.Config()
 
-    @staticmethod
-    def __on_river(assets: pd.DataFrame) -> pd.DataFrame:
+        # An instance for reading & writing CSV (comma separated values) data files.
+        self.__streams = src.functions.streams.Streams()
+
+        # the references directory
+        directories = src.functions.directories.Directories()
+        directories.create(path=self.__configurations.references_)
+
+    def __persist(self, blob: pd.DataFrame, name: str) -> None:
         """
 
-        :param assets:
-        :return: Only stations located on a river.
+        :param blob:
+        :param name:
+        :return:
         """
 
-        return assets.loc[assets['on_river'], :]
+        message = self.__streams.write(blob=blob, path=os.path.join(self.__configurations.references_, f'{name}.csv'))
+        logging.info(message)
 
     def __span(self, assets: pd.DataFrame) -> pd.DataFrame:
         """
@@ -63,10 +74,11 @@ class Interface:
         # that were recording measures from a starting point of interest.
         assets = src.data.assets.Assets(codes=codes, stations=stations).exc()
         assets = self.__span(assets=assets.copy())
-        assets = self.__on_river(assets=assets.copy())
+        self.__persist(blob=assets, name='assets')
 
         # Rating
-        src.data.rating.Rating().exc()
+        rating = src.data.rating.Rating().exc()
+        self.__persist(blob=rating, name='rating')
 
         # Partitions for parallel data retrieval; for parallel computing.
         partitions = src.data.partitions.Partitions(data=assets).exc()
