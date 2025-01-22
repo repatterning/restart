@@ -22,6 +22,9 @@ class Rating:
                       '&request=getQualityCodes&datasource=0&format=json')
 
         self.__code = {'50': 'G', '100': 'E', '140': 'PROV', '150': 'S', '200': 'V', '254': 'U'}
+        self.__description = {'50': 'Good', '100': 'Estimated', '140': 'Provisional', '150': 'Suspect',
+                              '200': 'Unchecked (imported from legacy database)',
+                              '254': 'Unchecked'}
 
     def exc(self):
         """
