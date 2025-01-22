@@ -15,6 +15,11 @@ def main():
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info(__name__)
 
+    if reacquire:
+        keys = src.s3.keys.Keys(service=service, bucket_name=s3_parameters.internal)
+        existing = keys.excerpt(prefix=(s3_parameters.path_internal_data + 'series'))
+        logging.info(existing)
+
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
 
@@ -30,16 +35,15 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S')
 
     # Modules
-
-
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
-
     import src.functions.cache
     import src.functions.service
-
+    import src.s3.keys
     import src.s3.s3_parameters
     import src.setup
+
+    reacquire: bool = True
 
     # S3 S3Parameters, Service Instance
     connector = boto3.session.Session()
@@ -47,6 +51,6 @@ if __name__ == '__main__':
     service: sr.Service = src.functions.service.Service(connector=connector, region_name=s3_parameters.region_name).exc()
 
     # Setting-up
-    setup: bool = src.setup.Setup(service=service, s3_parameters=s3_parameters).exc()
+    setup: bool = src.setup.Setup(service=service, s3_parameters=s3_parameters).exc(reacquire=reacquire)
 
     main()
