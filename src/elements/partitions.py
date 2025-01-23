@@ -29,6 +29,3 @@ class Partitions(typing.NamedTuple):
     ts_id: int
     catchment_id: int
     datestr: str
-    catchment_size: float
-    gauge_datum: float
-    on_river: bool
