@@ -20,6 +20,8 @@ def main():
         existing = keys.excerpt(prefix=(s3_parameters.path_internal_data + 'series'))
         logging.info(existing)
 
+    src.data.interface.Interface().exc()
+
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
 
@@ -35,6 +37,7 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S')
 
     # Modules
+    import src.data.interface
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
     import src.functions.cache
