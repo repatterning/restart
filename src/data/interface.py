@@ -74,10 +74,12 @@ class Interface:
         # that were recording measures from a starting point of interest.
         assets = src.data.assets.Assets(codes=codes, stations=stations).exc()
         assets = self.__span(assets=assets.copy())
+        logging.info(assets.head())
         self.__persist(blob=assets, name='assets')
 
         # Rating
         rating = src.data.rating.Rating().exc()
+        logging.info(rating.head())
         self.__persist(blob=rating, name='rating')
 
         # Partitions for parallel data retrieval; for parallel computing.
