@@ -54,7 +54,7 @@ class Rating:
 
         frame = data.copy()
         frame = frame.assign(code=frame['key'].astype(str).map(self.__code))
-        frame = frame.assign(description=frame['description'].astype(str).map(self.__description))
+        frame = frame.assign(description=frame['key'].astype(str).map(self.__description))
 
         return frame
 
