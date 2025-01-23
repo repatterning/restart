@@ -57,16 +57,18 @@ class Ingress:
         except botocore.exceptions.ClientError as err:
             raise err from err
 
-    def exc(self, strings: pd.DataFrame) -> list[str]:
+    def exc(self, strings: pd.DataFrame, tags: dict = None) -> list[str]:
         """
 
         :param strings: The strings for Amazon Simple Storage Service (S3) transfers
+        :param tags: For project, etc., tagiing.
         :return:
         """
 
         computations = []
         for string in strings.to_dict(orient='records'):
-            message = self.__ingress(file=string['file'], key=string['key'], metadata=string['metadata'])
+            message = self.__ingress(file=string['file'], key=string['key'],
+                                     metadata=string['metadata'], tags=tags)
             computations.append(message)
         messages = dask.compute(computations, scheduler='threads')[0]
 
