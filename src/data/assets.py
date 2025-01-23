@@ -30,8 +30,8 @@ class Assets:
         """
 
         left = ['station_id', 'station_name', 'catchment_id', 'catchment_name', 'ts_id', 'ts_name', 'from', 'to',
-                'stationparameter_no', 'parametertype_id']
-        right = ['station_id', 'station_latitude', 'station_longitude', 'river_id',
+                'stationparameter_no', 'stationparameter_name']
+        right = ['station_id', 'station_latitude', 'station_longitude', 'river_id', 'river_name',
                  'CATCHMENT_SIZE', 'GAUGE_DATUM']
 
         data = self.__codes[left].merge(self.__stations[right], on='station_id', how='left')
