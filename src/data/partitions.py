@@ -20,13 +20,15 @@ class Partitions:
         :param data:
         """
 
-        self.__data = data
-
         # Fields
         self.__fields = ['ts_id', 'catchment_id', 'datestr', 'catchment_size', 'gauge_datum', 'on_river']
 
         # Configurations
         self.__configurations = config.Config()
+
+        # Temporary
+        codes = data['ts_id'].unique()[self.__configurations.n_sources:]
+        self.__data = data.copy().loc[data['ts_id'].isin(codes), :]
 
     @dask.delayed
     def __matrix(self, start: str) -> list:
