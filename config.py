@@ -37,7 +37,7 @@ class Config:
         self.at_least = datetime.datetime.strptime('2025-01-05', '%Y-%m-%d')
 
         # Limits per access
-        self.n_stations = 9
+        self.n_sources = 9
 
         # Period: P1D, P1M, P1Y, etc.
         self.period = 'P1Y'
