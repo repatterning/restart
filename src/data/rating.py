@@ -1,10 +1,8 @@
 """Module rating.py"""
 import logging
-import os
 
 import pandas as pd
 
-import config
 import src.functions.directories
 import src.functions.objects
 import src.functions.streams
@@ -72,6 +70,6 @@ class Rating:
 
         data = self.__structure(values=values)
         data = self.__anomalies(data=data.copy())
-        logging.info(data)
+        data.info()
 
         return data
