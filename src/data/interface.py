@@ -87,4 +87,4 @@ class Interface:
         logging.info(partitions)
 
         # Retrieving time series points
-        src.data.points.Points().exc(partitions=partitions)
+        # src.data.points.Points().exc(partitions=partitions)
