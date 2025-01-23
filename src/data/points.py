@@ -58,8 +58,7 @@ class Points:
         frame.rename(columns=self.__rename, inplace=True)
 
         # The identification codes of the time series
-        frame = frame.assign(
-            station_id=parts[0]['station_id'], catchment_id=parts[0]['catchment_id'])
+        frame = frame.assign(ts_id=parts[0]['ts_id'])
 
         return frame
 
@@ -103,12 +102,9 @@ class Points:
 
         computations = []
         for partition in partitions:
-
             url = self.__url.format(ts_id=partition.ts_id, datestr=partition.datestr)
             data = self.__get_data(url=url)
-            data = self.__extra_features(data=data.copy(), partition=partition)
             message = self.__persist(data=data, partition=partition)
-
             computations.append(message)
         calculations = dask.compute(computations, scheduler='threads')[0]
 
