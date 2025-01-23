@@ -21,6 +21,7 @@ def main():
         logging.info(existing)
 
     src.data.interface.Interface().exc()
+    src.transfer.interface.Interface(service=service, s3_parameters=s3_parameters).exc()
 
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
@@ -45,6 +46,7 @@ if __name__ == '__main__':
     import src.s3.keys
     import src.s3.s3_parameters
     import src.setup
+    import src.transfer.interface
 
     reacquire: bool = True
 
