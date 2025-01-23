@@ -63,20 +63,6 @@ class Points:
         return frame
 
     @dask.delayed
-    def __extra_features(self, data: pd.DataFrame, partition: prt.Partitions):
-        """
-
-        :param data:
-        :param partition:
-        :return:
-        """
-
-        data = data.assign(
-            catchment_size=partition.catchment_size, gauge_datum=partition.gauge_datum, on_river=int(partition.on_river))
-
-        return data
-
-    @dask.delayed
     def __persist(self, data: pd.DataFrame, partition: prt.Partitions) -> str:
         """
 
