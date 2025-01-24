@@ -2,9 +2,11 @@
 import logging
 import glob
 import os
+import json
 
 import numpy as np
 import pandas as pd
+import pathlib
 
 
 class Dictionary:
@@ -12,21 +14,13 @@ class Dictionary:
     Class Dictionary
     """
 
-    def __init__(self):
+    def __init__(self, metadata: dict):
         """
         Constructor
         """
 
         # Metadata
-        self.__metadata = {
-            'timestamp': 'Milliseconds since 1 January 1970',
-            'value': 'The water level above a fixed measuring point, i.e., above the station Gauge Datum, in metres.',
-            'quality_code': 'The quality code, rating, of the measure.',
-            'station_id': 'The measuring station identification code.',
-            'catchment_id': 'The identification code of the catchment wherein the measuring station resides.',
-            'catchment_size': 'In square kilometres.',
-            'gauge_datum': 'The reference point of a gauge site, in metres.',
-            'on_river': 'If the measuring station is on a river 1, otherwise 0.'}
+        self.__metadata = metadata
 
     @staticmethod
     def __local(path: str, extension: str) -> pd.DataFrame:
@@ -67,7 +61,8 @@ class Dictionary:
         local: pd.DataFrame = self.__local(path=path, extension=extension)
         logging.info(local)
 
-        local['section'] = local['vertex'].apply(lambda x: str(x).split(sep='/', maxsplit=2)[0])
+        local['section'] = local['vertex'].apply(lambda x: str(x).split(sep='/', maxsplit=3)[1])
+        local['section'] = local['section'].apply(lambda x: str(x).split(sep='.', maxsplit=2)[0])
         logging.info(local)
 
         if local.empty:
@@ -76,7 +71,8 @@ class Dictionary:
         # Building the Amazon S3 strings
         frame = local.assign(key=prefix + local["vertex"])
 
-        # The metadata dict strings
-        frame['metadata'] = np.array(self.__metadata).repeat(frame.shape[0])
+        # The metadata dict strings np.array(self.__metadata).repeat(frame.shape[0])  frame['section'].map(self.__metadata)
+        logging.info(self.__metadata['series'])
+        frame['metadata'] = frame['section'].map(lambda x: json.dumps(self.__metadata[str(x)]))
 
         return frame[['file', 'key', 'metadata']]
