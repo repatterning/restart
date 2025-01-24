@@ -1,12 +1,10 @@
 """Module dictionary.py"""
-import logging
 import glob
-import os
 import json
+import logging
+import os
 
-import numpy as np
 import pandas as pd
-import pathlib
 
 
 class Dictionary:
@@ -33,19 +31,17 @@ class Dictionary:
 
         # Within a remote container this will be /app/
         splitter = os.path.basename(path) + os.path.sep
-        logging.info(splitter)
+        logging.info('splitter: %s', splitter)
 
         # The list of files within the path directory, including its child directories.
-        files: list[str] = glob.glob(pathname=os.path.join(path, '**', f'*.{extension}'),
-                                     recursive=True)
+        files: list[str] = glob.glob(pathname=os.path.join(path, '**', f'*.{extension}'), recursive=True)
 
+        # Hence
         if len(files) == 0:
             return pd.DataFrame()
 
-        details: list[dict] = [
-            {'file': file,
-             'vertex': file.rsplit(splitter, maxsplit=1)[1]}
-            for file in files]
+        details: list[dict] = [{'file': file, 'vertex': file.rsplit(splitter, maxsplit=1)[1]}
+                               for file in files]
 
         return pd.DataFrame.from_records(details)
 
@@ -59,11 +55,8 @@ class Dictionary:
         """
 
         local: pd.DataFrame = self.__local(path=path, extension=extension)
-        logging.info(local)
-
         local['section'] = local['vertex'].apply(lambda x: str(x).split(sep='/', maxsplit=3)[1])
         local['section'] = local['section'].apply(lambda x: str(x).split(sep='.', maxsplit=2)[0])
-        logging.info(local)
 
         if local.empty:
             return pd.DataFrame()
@@ -71,7 +64,7 @@ class Dictionary:
         # Building the Amazon S3 strings
         frame = local.assign(key=prefix + local["vertex"])
 
-        # The metadata dict strings np.array(self.__metadata).repeat(frame.shape[0])  frame['section'].map(self.__metadata)
+        # The metadata dict strings
         logging.info(self.__metadata['series'])
         frame['metadata'] = frame['section'].map(lambda x: json.dumps(self.__metadata[str(x)]))
 
