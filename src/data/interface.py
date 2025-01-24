@@ -89,9 +89,14 @@ class Interface:
         rating = src.data.rating.Rating().exc()
         self.__persist(blob=rating, name='rating')
 
-        # Partitions for parallel data retrieval; for parallel computing.
+        # Assets that have points that span a core period.
         assets = self.__span(assets=assets.copy())
-        assets = self.__specific(assets=assets.copy())
+
+        # If not starting from scratch
+        if not self.__configurations.reacquire:
+            assets = self.__specific(assets=assets.copy())
+
+        # Partitions for parallel data retrieval; for parallel computing.
         partitions = src.data.partitions.Partitions(data=assets).exc()
         logging.info(partitions)
 
