@@ -45,6 +45,14 @@ class Dictionary:
 
         return pd.DataFrame.from_records(details)
 
+    @staticmethod
+    def __sections(local: pd.DataFrame) -> pd.DataFrame:
+
+        local['section'] = local['vertex'].apply(lambda x: str(x).split(sep='/', maxsplit=3)[1])
+        local['section'] = local['section'].apply(lambda x: str(x).split(sep='.', maxsplit=2)[0])
+
+        return local
+
     def exc(self, path: str, extension: str, prefix: str) -> pd.DataFrame:
         """
 
@@ -55,11 +63,10 @@ class Dictionary:
         """
 
         local: pd.DataFrame = self.__local(path=path, extension=extension)
-        local['section'] = local['vertex'].apply(lambda x: str(x).split(sep='/', maxsplit=3)[1])
-        local['section'] = local['section'].apply(lambda x: str(x).split(sep='.', maxsplit=2)[0])
-
         if local.empty:
             return pd.DataFrame()
+        else:
+            local = self.__sections(local=local.copy())
 
         # Building the Amazon S3 strings
         frame = local.assign(key=prefix + local["vertex"])
