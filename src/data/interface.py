@@ -54,7 +54,6 @@ class Interface:
 
         conditionals = (assets['from'] <= self.__configurations.starting) & (assets['to'] >= self.__configurations.at_least)
         assets = assets.loc[conditionals, :]
-        assets.info()
 
         return assets
 
@@ -66,7 +65,6 @@ class Interface:
         """
 
         assets = assets.loc[assets['ts_id'].isin(self.__configurations.specific), :]
-        assets.info()
 
         return assets
 
@@ -98,4 +96,4 @@ class Interface:
         logging.info(partitions)
 
         # Retrieving time series points
-        src.data.points.Points().exc(partitions=partitions)
+        # src.data.points.Points().exc(partitions=partitions)
