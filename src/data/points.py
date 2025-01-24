@@ -87,7 +87,7 @@ class Points:
         """
 
         computations = []
-        for partition in partitions:
+        for partition in partitions[:3]:
             url = self.__url.format(ts_id=partition.ts_id, datestr=partition.datestr)
             data = self.__get_data(url=url)
             message = self.__persist(data=data, partition=partition)
