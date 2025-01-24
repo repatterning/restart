@@ -25,8 +25,9 @@ class Config:
         # Template
         self.s3_parameters_key = 's3_parameters.yaml'
 
+
         '''
-        For configurations repository
+        For the acquisition configurations json/yaml
         '''
 
         # Seed
@@ -36,12 +37,15 @@ class Config:
         self.starting = datetime.datetime.strptime('2017-01-01', '%Y-%m-%d')
         self.at_least = datetime.datetime.strptime('2025-01-05', '%Y-%m-%d')
 
-        # Limits per access
-        self.n_sources = 9
-
-        # Period: P1D, P1M, P1Y, etc.
+        # Period
         self.period = 'P1Y'
 
         # The training/testing cut-off point
         datestr = datetime.datetime.strptime('2025-01-01 00:00:00', '%Y-%m-%d %H:%M:%S')
         self.cutoff = 1000 * time.mktime(datestr.timetuple())
+
+        # Reacquire all again
+        self.reacquire = False
+
+        # If not re-acquiring, the specific time series in focus; via the time series codes
+        self.specific = [57532010, 52488010]
