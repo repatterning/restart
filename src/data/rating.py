@@ -1,5 +1,4 @@
 """Module rating.py"""
-import logging
 
 import pandas as pd
 
@@ -66,7 +65,6 @@ class Rating:
 
         objects = src.functions.objects.Objects()
         values = objects.api(url=self.__url)
-        logging.info(values)
 
         data = self.__structure(values=values)
         data = self.__anomalies(data=data.copy())
