@@ -15,12 +15,7 @@ def main():
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info(__name__)
 
-    # Temporary
-    if not reacquire:
-        keys = src.s3.keys.Keys(service=service, bucket_name=s3_parameters.internal)
-        existing = keys.excerpt(prefix=(s3_parameters.path_internal_data + 'series'))
-        logging.info(existing)
-
+    # Steps
     src.data.interface.Interface().exc()
     src.transfer.interface.Interface(service=service, s3_parameters=s3_parameters).exc()
 
@@ -46,7 +41,6 @@ if __name__ == '__main__':
     import src.elements.service as sr
     import src.functions.cache
     import src.functions.service
-    import src.s3.keys
     import src.s3.s3_parameters
     import src.setup
     import src.transfer.interface
