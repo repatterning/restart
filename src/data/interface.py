@@ -58,6 +58,18 @@ class Interface:
 
         return assets
 
+    def __specific(self, assets: pd.DataFrame) -> pd.DataFrame:
+        """
+
+        :param assets:
+        :return:
+        """
+
+        assets = assets.loc[assets['ts_id'].isin(self.__configurations.specific), :]
+        assets.info()
+
+        return assets
+
     def exc(self):
         """
 
@@ -73,7 +85,6 @@ class Interface:
         # Hence, assets; joining codes & stations, subsequently limiting by stations
         # that were recording measures from a starting point of interest.
         assets = src.data.assets.Assets(codes=codes, stations=stations).exc()
-        assets = self.__span(assets=assets.copy())
         self.__persist(blob=assets, name='assets')
 
         # Rating
@@ -81,6 +92,8 @@ class Interface:
         self.__persist(blob=rating, name='rating')
 
         # Partitions for parallel data retrieval; for parallel computing.
+        assets = self.__span(assets=assets.copy())
+        assets = self.__specific(assets=assets.copy())
         partitions = src.data.partitions.Partitions(data=assets).exc()
         logging.info(partitions)
 
