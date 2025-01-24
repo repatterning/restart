@@ -28,6 +28,7 @@ def main():
 
 
 if __name__ == '__main__':
+    
     # Setting-up
     root = os.getcwd()
     sys.path.append(root)
@@ -38,6 +39,7 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S')
 
     # Modules
+    import config
     import src.data.interface
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
@@ -48,7 +50,7 @@ if __name__ == '__main__':
     import src.setup
     import src.transfer.interface
 
-    reacquire: bool = True
+    reacquire: bool = config.Config().reacquire
 
     # S3 S3Parameters, Service Instance
     connector = boto3.session.Session()
