@@ -15,7 +15,8 @@ def main():
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info(__name__)
 
-    if reacquire:
+    # Temporary
+    if not reacquire:
         keys = src.s3.keys.Keys(service=service, bucket_name=s3_parameters.internal)
         existing = keys.excerpt(prefix=(s3_parameters.path_internal_data + 'series'))
         logging.info(existing)
@@ -28,7 +29,7 @@ def main():
 
 
 if __name__ == '__main__':
-    
+
     # Setting-up
     root = os.getcwd()
     sys.path.append(root)
