@@ -1,7 +1,5 @@
 """Module dictionary.py"""
 import glob
-import json
-import logging
 import os
 
 import pandas as pd
@@ -72,8 +70,8 @@ class Dictionary:
         local: pd.DataFrame = self.__local(path=path, extension=extension)
         if local.empty:
             return pd.DataFrame()
-        else:
-            local = self.__sections(local=local.copy())
+
+        local = self.__sections(local=local.copy())
 
         # Building the Amazon S3 strings
         frame = local.assign(key=prefix + local["vertex"])
