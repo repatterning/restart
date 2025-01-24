@@ -29,9 +29,8 @@ class Dictionary:
         :return:
         """
 
-        # Within a remote container this will be /app/
+        # This will be warehouse/
         splitter = os.path.basename(path) + os.path.sep
-        logging.info('splitter: %s', splitter)
 
         # The list of files within the path directory, including its child directories.
         files: list[str] = glob.glob(pathname=os.path.join(path, '**', f'*.{extension}'), recursive=True)
@@ -47,8 +46,16 @@ class Dictionary:
 
     @staticmethod
     def __sections(local: pd.DataFrame) -> pd.DataFrame:
+        """
 
+        :param local:
+        :return:
+        """
+
+        # The second item of {warehouse}/{...}/{.../.../..., ...., ....}
         local['section'] = local['vertex'].apply(lambda x: str(x).split(sep='/', maxsplit=3)[1])
+
+        # If a file, exclude the extension
         local['section'] = local['section'].apply(lambda x: str(x).split(sep='.', maxsplit=2)[0])
 
         return local
@@ -71,8 +78,7 @@ class Dictionary:
         # Building the Amazon S3 strings
         frame = local.assign(key=prefix + local["vertex"])
 
-        # The metadata dict strings
-        logging.info(self.__metadata['series'])
+        # Assign metadata dict strings via section values
         frame['metadata'] = frame['section'].map(lambda x: json.dumps(self.__metadata[str(x)]))
 
         return frame[['file', 'key', 'metadata']]
