@@ -56,16 +56,18 @@ class Setup:
 
         # An instance for interacting with local directories
         directories = src.functions.directories.Directories()
+        directories.cleanup(path=self.__configurations.warehouse)
 
         # The warehouse
-        return directories.cleanup(path=self.__configurations.warehouse)
+        return directories.create(path=self.__configurations.warehouse)
 
-    def exc(self) -> bool:
+    def exc(self, reacquire: bool) -> bool:
         """
 
         :return:
         """
 
-        setup = self.__s3() & self.__local()
+        if reacquire:
+            self.__s3()
 
-        return setup
+        return self.__local()

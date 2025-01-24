@@ -3,6 +3,7 @@ Module config
 """
 import os
 import datetime
+import time
 
 
 class Config:
@@ -18,16 +19,33 @@ class Config:
         """
 
         self.warehouse: str = os.path.join(os.getcwd(), 'warehouse')
+        self.series_ = os.path.join(self.warehouse, 'data', 'series')
+        self.references_ = os.path.join(self.warehouse, 'references')
 
-        # A S3 parameters template
-        self.s3_parameters_template = 'https://raw.githubusercontent.com/enqueter/.github/master/profile/s3_parameters_sandbox.yaml'
+        # Template
+        self.s3_parameters_key = 's3_parameters.yaml'
 
-        # After the development phase the start date will be a few years earlier.
-        self.starting = datetime.datetime.strptime('2018-01-01', '%Y-%m-%d')
-        self.ending = datetime.datetime.today() - datetime.timedelta(days=3)
 
-        # Devices in focus, via their sequence identifiers
-        # pollutant: Nitrogen Dioxide
-        # area: Edinburgh
-        # sequence (station): 155 (901), 531 (1014), 177 (460), 150 (791)
-        self.sequence_id_filter = [155, 531, 177, 150]
+        '''
+        For the acquisition configurations json/yaml
+        '''
+
+        # Seed
+        self.seed = 5
+
+        # Span
+        self.starting = datetime.datetime.strptime('2017-01-01', '%Y-%m-%d')
+        self.at_least = datetime.datetime.strptime('2025-01-05', '%Y-%m-%d')
+
+        # Period
+        self.period = 'P1Y'
+
+        # The training/testing cut-off point
+        datestr = datetime.datetime.strptime('2025-01-01 00:00:00', '%Y-%m-%d %H:%M:%S')
+        self.cutoff = 1000 * time.mktime(datestr.timetuple())
+
+        # Reacquire all again
+        self.reacquire = True
+
+        # If not re-acquiring, a set of specific time series in focus; via time series codes
+        self.specific = [57532010, 52488010]

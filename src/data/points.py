@@ -1,112 +1,97 @@
 """Module points.py"""
+import logging
 import os
 
 import dask
 import pandas as pd
 
-import src.data.api
-import src.elements.sequence as sq
+import config
+import src.elements.partitions as prt
+import src.functions.directories
 import src.functions.objects
 import src.functions.streams
 
 
 class Points:
     """
-    Class Points
+    <b>Notes</b><br>
+    ------<br>
 
-    Retrieves telemetric device data points by date, structures the data sets, and saves them.
+    The time series data.
     """
 
-    def __init__(self, sequences: list[sq.Sequence], storage: str):
+    def __init__(self):
+        """
+        Constructor
         """
 
-        :param sequences:
-        :param storage:
-        """
+        self.__configurations = config.Config()
 
-        self.__sequences = sequences
-        self.__storage = storage
-
-        self.__api = src.data.api.API()
+        # An instance for reading & writing JSON (JavaScript Object Notation) objects, CSV, ...
         self.__objects = src.functions.objects.Objects()
         self.__streams = src.functions.streams.Streams()
+        self.__directories = src.functions.directories.Directories()
+
+        # The uniform resource locator, data columns, etc.
+        self.__url = ('https://timeseries.sepa.org.uk/KiWIS/KiWIS?service=kisters&type=queryServices&datasource=0'
+                      '&request=getTimeseriesValues&ts_id={ts_id}'
+                      f'&period={self.__configurations.period}'
+                      '&from={datestr}&returnfields=Timestamp,Value,Quality Code&metadata=true'
+                      '&md_returnfields=ts_id,ts_name,ts_unitname,ts_unitsymbol,station_id,'
+                      'catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json')
+
+        self.__rename = {'Timestamp': 'timestamp', 'Value': 'value', 'Quality Code': 'quality_code'}
 
     @dask.delayed
-    def __url(self, sequence_id: int, datestr: str) -> str:
-        """
-        Builds a Scottish Air Quality API (Application Programming Interface) URL (Uniform Resource Locator) for a
-        data period covering a single calendar month.
-
-        :param sequence_id:
-        :param datestr:
-        :return:
-        """
-
-        return self.__api.exc(sequence_id=sequence_id, datestr=datestr)
-
-    @dask.delayed
-    def __reading(self, url: str) -> dict:
+    def __get_data(self, url: str):
         """
 
         :param url:
         :return:
         """
 
-        content: dict = self.__objects.api(url=url)
-        dictionary = content[0]['data']
+        parts = self.__objects.api(url=url)
 
-        return dictionary
+        # The data in data frame form
+        columns = parts[0]['columns'].split(',')
+        frame = pd.DataFrame.from_records(data=parts[0]['data'], columns=columns)
+        frame.rename(columns=self.__rename, inplace=True)
+
+        # The identification codes of the time series
+        frame = frame.assign(ts_id=parts[0]['ts_id'])
+
+        return frame
 
     @dask.delayed
-    def __building(self, dictionary: dict, sequence_id: int) -> pd.DataFrame:
+    def __persist(self, data: pd.DataFrame, partition: prt.Partitions) -> str:
         """
 
-        :param dictionary:
-        :param sequence_id:
+        :param data:
+        :param partition:
         :return:
         """
 
-        if not bool(dictionary):
-            data = pd.DataFrame()
-        else:
-            data = pd.DataFrame(data=dictionary, columns=['epoch_ms', 'measure'])
-            data.dropna(axis=0, inplace=True)
-            data.loc[:, 'timestamp'] = pd.to_datetime(data.loc[:, 'epoch_ms'].array, unit='ms', origin='unix')
-            data.loc[:, 'date'] = data.loc[:, 'timestamp'].dt.date.array
-            data.loc[:, 'sequence_id'] = sequence_id
-            data = data.copy().loc[data['measure'] >= 0, :]
+        directory = os.path.join(self.__configurations.series_, str(partition.catchment_id), str(partition.ts_id))
+        self.__directories.create(path=directory)
 
-        return data
+        message = self.__streams.write(
+            blob=data, path=os.path.join(directory, f'{partition.datestr}.csv'))
 
-    @dask.delayed
-    def __depositing(self, blob: pd.DataFrame, datestr: str, sequence: sq.Sequence) -> str:
+        return message
+
+    def exc(self, partitions: list[prt.Partitions]):
         """
 
-        :param blob:
-        :param datestr:
-        :param sequence:
-        :return:
-        """
-
-        if blob.empty:
-            return f'{sequence.sequence_id} -> empty'
-
-        basename = os.path.join(self.__storage, f'pollutant_{sequence.pollutant_id}', f'station_{sequence.station_id}')
-        return self.__streams.write(blob=blob, path=os.path.join(basename, f'{datestr}.csv'))
-
-    def exc(self):
-        """
-
+        :param partitions: ts_id, datestr, catchment_size, gauge_datum, on_river
         :return:
         """
 
         computations = []
-        for sequence in self.__sequences:
-            url = self.__url(sequence_id=sequence.sequence_id, datestr=sequence.datestr)
-            dictionary = self.__reading(url=url)
-            data = self.__building(dictionary=dictionary, sequence_id=sequence.sequence_id)
-            message = self.__depositing(blob=data, datestr=sequence.datestr, sequence=sequence)
+        for partition in partitions:
+            url = self.__url.format(ts_id=partition.ts_id, datestr=partition.datestr)
+            data = self.__get_data(url=url)
+            message = self.__persist(data=data, partition=partition)
             computations.append(message)
-        messages = dask.compute(computations, scheduler='processes')[0]
+        calculations = dask.compute(computations, scheduler='threads')[0]
 
-        return messages
+        logging.info(calculations)

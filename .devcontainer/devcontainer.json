@@ -6,14 +6,13 @@ Configuration README: https://github.com/devcontainers/templates/tree/main/src/p
   "name": "Python 3",
 
   // Image
-  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
-
+  // "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
 
   // Or use a Dockerfile or Docker Compose file; https://containers.dev/guide/dockerfile
-  /*"build": {
+  "build": {
     "dockerfile": "Dockerfile"
   },
-  */
+  
 
   // Features to add to the dev container; https://containers.dev/features.
   "features": {
@@ -25,7 +24,7 @@ Configuration README: https://github.com/devcontainers/templates/tree/main/src/p
   // "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "pip3 install --user -r requirements.txt --no-cache-dir",
+  // "postCreateCommand": "pip3 install --user -r requirements.txt --no-cache-dir",
 
   // Configure tool-specific properties.
   "customizations": {

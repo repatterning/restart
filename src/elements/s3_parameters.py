@@ -13,41 +13,29 @@ class S3Parameters(typing.NamedTuple):
     region_name : str
       The Amazon Web Services region code.
 
-    region_name_identifier : str
-      The identification code for extracting the <region_name> value
-
     location_constraint : str
       The region code of the region that the data is limited to.
-
-    access_control_list : str
-      Access control list selection.
-
-    project_identifier : str
-      The project's identifier within the cloud platform.
 
     internal : str
       The Amazon S3 (Simple Storage Service) bucket that hosts this project's data.
 
-    path_internal_points : str
-      The bucket path of the telemetric data.
+    path_internal_data : str
+      A root bucket-prefix for data.
 
     path_internal_references : str
-      The bucket path of the telemetric data references.
+      A root bucket-prefix for references.
 
     external: str
-      The name of the bucket that the project's calculations will be delivered to.
+      An Amazon S3 (Simple Storage Service) bucket.
 
-    path_external_quantiles: str
-      A path
+    configurations: str
+      An Amazon S3 (Simple Storage Service) bucket.
     """
 
     region_name: str
-    region_name_identifier: str
     location_constraint: str
-    access_control_list: str
-    project_identifier: str
     internal: str
-    path_internal_points: str
+    path_internal_data: str
     path_internal_references: str
     external: str
-    path_external_quantiles: str
+    configurations: str

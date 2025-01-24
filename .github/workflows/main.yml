@@ -41,20 +41,17 @@ jobs:
           echo "Issues in relation to logic (F7), syntax (Python E9, Flake F7), mathematical
           formulae symbols (F63), undefined variable names (F82):"
           
-          printf "\n src/algorithms "
-          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/algorithms
-          
           printf "\n src/data "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/data
-          
+                    
           printf "\n src/elements "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/elements
           
           printf "\n src/functions "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/functions
           
-          printf "\n src/references "
-          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/references
+          printf "\n src/transfer "
+          flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/transfer
           
           printf "\n src/s3 "
           flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src/s3
@@ -63,9 +60,6 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           printf "\n\n"
           echo "Complexity issues:"
-          
-          printf "\n src/algorithms "
-          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/algorithms
           
           printf "\n src/data "
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/data
@@ -76,8 +70,8 @@ jobs:
           printf "\n src/functions "
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/functions
           
-          printf "\n src/references "
-          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/references
+          printf "\n src/transfer "
+          flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/transfer
           
           printf "\n src/s3 "
           flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics src/s3
@@ -86,9 +80,6 @@ jobs:
         run: |
           printf "\n"
           echo "============================= pylint session starts =============================="
-
-          printf "\n Package src/algorithms"
-          pylint --rcfile .pylintrc src/algorithms
           
           printf "\n Package src/data"
           pylint --rcfile .pylintrc src/data
@@ -99,8 +90,8 @@ jobs:
           printf "\n Package src/functions"
           pylint --rcfile .pylintrc src/functions
           
-          printf "\n Package src/references"
-          pylint --rcfile .pylintrc src/references
+          printf "\n Package src/transfer"
+          pylint --rcfile .pylintrc src/transfer
           
           printf "\n Package src/s3"
           pylint --rcfile .pylintrc src/s3
@@ -118,9 +109,6 @@ jobs:
           printf "\n"
           echo "============================= coverage session starts =============================="
           
-          printf "\nCoverage tests/algorithms/"
-          printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/algorithms/ tests/algorithms/"
-          
           printf "\nCoverage tests/data/"
           printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/data/"
           
@@ -130,8 +118,8 @@ jobs:
           printf "\nCoverage tests/functions/"
           printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/elements/ tests/functions/"
           
-          printf "\nCoverage tests/references/"
-          printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/references/ tests/references/"
+          printf "\nCoverage tests/transfer/"
+          printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/references/ tests/transfer/"
           
           printf "\nCoverage tests/s3/"
           printf "\n Upcoming ... pytest --cov-report term-missing  --cov src/references/ tests/s3/"
@@ -140,6 +128,7 @@ jobs:
   packages:
     name: GitHub Packages Container Registry
     needs: build
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     permissions:
@@ -179,6 +168,7 @@ jobs:
   ecr:
     name: Amazon Elastic Container Registry
     needs: build
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     permissions:
