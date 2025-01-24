@@ -13,22 +13,17 @@ class Partitions:
 
     def __init__(self, data: pd.DataFrame):
         """
-        'station_id', 'catchment_id', 'catchment_name', 'ts_id', 'ts_name', 'from', 'to',
-        'stationparameter_no', 'parametertype_id', 'station_latitude', 'station_longitude', 'river_id',
-        'catchment_size', 'gauge_datum'
 
         :param data:
         """
+
+        self.__data = data
 
         # Fields
         self.__fields = ['ts_id', 'catchment_id', 'datestr']
 
         # Configurations
         self.__configurations = config.Config()
-
-        # Temporary
-        codes = data['ts_id'].unique()[self.__configurations.n_sources:]
-        self.__data = data.copy().loc[data['ts_id'].isin(codes), :]
 
     @dask.delayed
     def __matrix(self, start: str) -> list:
