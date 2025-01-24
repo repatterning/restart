@@ -67,6 +67,9 @@ class Dictionary:
         local: pd.DataFrame = self.__local(path=path, extension=extension)
         logging.info(local)
 
+        local['section'] = local['vertex'].apply(lambda x: str(x).split(sep='/', maxsplit=2)[0])
+        logging.info(local)
+
         if local.empty:
             return pd.DataFrame()
 
