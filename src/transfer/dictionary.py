@@ -1,4 +1,5 @@
 """Module dictionary.py"""
+import logging
 import glob
 import os
 
@@ -36,7 +37,9 @@ class Dictionary:
         :return:
         """
 
+        # Within a remote container this will be /app/
         splitter = os.path.basename(path) + os.path.sep
+        logging.info(splitter)
 
         # The list of files within the path directory, including its child directories.
         files: list[str] = glob.glob(pathname=os.path.join(path, '**', f'*.{extension}'),
@@ -47,8 +50,7 @@ class Dictionary:
 
         details: list[dict] = [
             {'file': file,
-             'vertex': file.rsplit(splitter, maxsplit=1)[1],
-             'section': os.path.basename(os.path.dirname(file))}
+             'vertex': file.rsplit(splitter, maxsplit=1)[1]}
             for file in files]
 
         return pd.DataFrame.from_records(details)
@@ -63,6 +65,7 @@ class Dictionary:
         """
 
         local: pd.DataFrame = self.__local(path=path, extension=extension)
+        logging.info(local)
 
         if local.empty:
             return pd.DataFrame()
