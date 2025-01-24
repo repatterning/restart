@@ -39,8 +39,6 @@ class Interface:
 
         buffer = src.s3.unload.Unload(s3_client=self.__service.s3_client).exc(
             bucket_name=self.__s3_parameters.configurations, key_name=key_name)
-        logging.info(buffer)
-        logging.info(type(buffer))
 
         return json.loads(buffer)
 
@@ -51,7 +49,6 @@ class Interface:
         """
 
         metadata = self.__metadata()
-        logging.info(metadata)
 
         # The strings for transferring data to Amazon S3 (Simple Storage Service)
         dictionary = src.transfer.dictionary.Dictionary(metadata=metadata)
