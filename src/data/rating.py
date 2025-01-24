@@ -68,6 +68,5 @@ class Rating:
 
         data = self.__structure(values=values)
         data = self.__anomalies(data=data.copy())
-        data.info()
 
         return data
