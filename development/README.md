@@ -145,6 +145,25 @@ inspects complexity.
 <br>
 <br>
 
+## Snippets
+
+Determining a file's modification or creation date & time stamp
+
+```python
+import os
+import time
+
+# seconds since epoch
+seconds: float = os.path.getctime(...)
+stamp: str = time.ctime(seconds)
+structure: time.struct_time = time.strptime(stamp)
+time.strftime('%Y-%m-%d %H:%M:%S', structure)
+```
+
+
+<br>
+<br>
+
 ## References
 
 * [Epoch Time](https://unixtime.org)
