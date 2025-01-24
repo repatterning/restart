@@ -79,6 +79,6 @@ class Dictionary:
         frame = local.assign(key=prefix + local["vertex"])
 
         # Assign metadata dict strings via section values
-        frame['metadata'] = frame['section'].map(lambda x: json.dumps(self.__metadata[str(x)]))
+        frame['metadata'] = frame['section'].map(lambda x: self.__metadata[str(x)])
 
         return frame[['file', 'key', 'metadata']]
