@@ -1,4 +1,6 @@
 """Module partitions.py"""
+import datetime
+
 import dask
 import pandas as pd
 
@@ -41,16 +43,23 @@ class Partitions:
 
         return objects.tolist()
 
-    def exc(self) -> list[prt.Partitions]:
+    def exc(self, attributes: dict) -> list[prt.Partitions]:
         """
 
+        :param attributes:
         :return:
         """
 
-        frame = pd.date_range(start=self.__configurations.starting, end=self.__configurations.at_least, freq='YS'
+        # The boundaries of the dates; datetime format
+        starting = datetime.datetime.strptime(attributes.get('starting'), '%Y-%m-%d')
+        ending = datetime.datetime.strptime(attributes.get('ending'), '%Y-%m-%d')
+
+        # Create series
+        frame = pd.date_range(start=starting, end=ending, freq='YS'
                               ).to_frame(index=False, name='date')
         starts: pd.Series = frame['date'].apply(lambda x: x.strftime('%Y-%m-%d'))
 
+        # Compute partitions matrix
         computations = []
         for start in starts.values:
             matrix = self.__matrix(start=start)
