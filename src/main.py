@@ -42,7 +42,7 @@ if __name__ == '__main__':
     import src.functions.cache
     import src.functions.service
     import src.s3.s3_parameters
-    import src.setup
+    import src.preface.setup
     import src.transfer.interface
 
     reacquire: bool = config.Config().reacquire
@@ -53,6 +53,6 @@ if __name__ == '__main__':
     service: sr.Service = src.functions.service.Service(connector=connector, region_name=s3_parameters.region_name).exc()
 
     # Setting-up
-    setup: bool = src.setup.Setup(service=service, s3_parameters=s3_parameters).exc(reacquire=reacquire)
+    setup: bool = src.preface.setup.Setup(service=service, s3_parameters=s3_parameters).exc(reacquire=reacquire)
 
     main()
