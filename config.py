@@ -45,7 +45,7 @@ class Config:
         self.cutoff = 1000 * time.mktime(datestr.timetuple())
 
         # Reacquire all again
-        self.reacquire = True
+        self.reacquire = False
 
         # If not re-acquiring, a set of specific time series in focus; via time series codes
         self.specific = [57532010, 52488010]
