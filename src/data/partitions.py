@@ -4,7 +4,6 @@ import datetime
 import dask
 import pandas as pd
 
-import config
 import src.elements.partitions as prt
 
 
@@ -23,9 +22,6 @@ class Partitions:
 
         # Fields
         self.__fields = ['ts_id', 'catchment_id', 'datestr']
-
-        # Configurations
-        self.__configurations = config.Config()
 
     @dask.delayed
     def __matrix(self, start: str) -> list:
