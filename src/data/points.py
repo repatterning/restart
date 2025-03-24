@@ -20,9 +20,10 @@ class Points:
     The time series data.
     """
 
-    def __init__(self):
+    def __init__(self, period: str):
         """
-        Constructor
+
+        :param period: The data acquisition chunk size, vis-a-vis time
         """
 
         self.__configurations = config.Config()
@@ -35,7 +36,7 @@ class Points:
         # The uniform resource locator, data columns, etc.
         self.__url = ('https://timeseries.sepa.org.uk/KiWIS/KiWIS?service=kisters&type=queryServices&datasource=0'
                       '&request=getTimeseriesValues&ts_id={ts_id}'
-                      f'&period={self.__configurations.period}'
+                      f'&period={period}'
                       '&from={datestr}&returnfields=Timestamp,Value,Quality Code&metadata=true'
                       '&md_returnfields=ts_id,ts_name,ts_unitname,ts_unitsymbol,station_id,'
                       'catchment_id,parametertype_id,parametertype_name,river_name&dateformat=UNIX&format=json')
