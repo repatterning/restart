@@ -24,7 +24,7 @@ class Interface:
     def __init__(self, attributes: dict):
         """
 
-        :param attributes:
+        :param attributes: A set of data acquisition attributes.
         """
 
         self.__attributes = attributes
