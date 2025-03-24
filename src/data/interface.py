@@ -1,4 +1,5 @@
 """Module interface.py"""
+import datetime
 import logging
 import os.path
 
@@ -20,19 +21,21 @@ class Interface:
     Interface
     """
 
-    def __init__(self):
-        """
-        Constructor
+    def __init__(self, attributes: dict):
         """
 
-        self.__configurations = config.Config()
+        :param attributes:
+        """
+
+        self.__attributes = attributes
 
         # An instance for reading & writing CSV (comma separated values) data files.
         self.__streams = src.functions.streams.Streams()
 
         # the references directory
+        self.__references_ = config.Config().references_
         directories = src.functions.directories.Directories()
-        directories.create(path=self.__configurations.references_)
+        directories.create(path=self.__references_)
 
     def __persist(self, blob: pd.DataFrame, name: str) -> None:
         """
@@ -42,7 +45,7 @@ class Interface:
         :return:
         """
 
-        message = self.__streams.write(blob=blob, path=os.path.join(self.__configurations.references_, f'{name}.csv'))
+        message = self.__streams.write(blob=blob, path=os.path.join(self.__references_, f'{name}.csv'))
         logging.info(message)
 
     def __span(self, assets: pd.DataFrame) -> pd.DataFrame:
@@ -52,7 +55,9 @@ class Interface:
         :return:
         """
 
-        conditionals = (assets['from'] <= self.__configurations.starting) & (assets['to'] >= self.__configurations.at_least)
+        starting = datetime.datetime.strptime(self.__attributes.get('starting'), '%Y-%m-%d')
+        at_least = datetime.datetime.strptime(self.__attributes.get('at_least'), '%Y-%m-%d')
+        conditionals = (assets['from'] <= starting) & (assets['to'] >= at_least)
         assets = assets.loc[conditionals, :]
 
         return assets
@@ -64,7 +69,7 @@ class Interface:
         :return:
         """
 
-        assets = assets.loc[assets['ts_id'].isin(self.__configurations.specific), :]
+        assets = assets.loc[assets['ts_id'].isin(self.__attributes.get('excerpt')), :]
 
         return assets
 
@@ -93,12 +98,12 @@ class Interface:
         assets = self.__span(assets=assets.copy())
 
         # If not starting from scratch
-        if not self.__configurations.reacquire:
+        if not self.__attributes.get('reacquire'):
             assets = self.__specific(assets=assets.copy())
 
         # Partitions for parallel data retrieval; for parallel computing.
-        partitions = src.data.partitions.Partitions(data=assets).exc()
+        partitions = src.data.partitions.Partitions(data=assets).exc(attributes=self.__attributes)
         logging.info(partitions)
 
         # Retrieving time series points
-        src.data.points.Points().exc(partitions=partitions)
+        src.data.points.Points(period=self.__attributes.get('period')).exc(partitions=partitions)
