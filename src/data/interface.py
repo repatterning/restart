@@ -56,7 +56,12 @@ class Interface:
         """
 
         starting = datetime.datetime.strptime(self.__attributes.get('starting'), '%Y-%m-%d')
-        at_least = datetime.datetime.strptime(self.__attributes.get('at_least'), '%Y-%m-%d')
+
+        if self.__attributes.get('reacquire'):
+            at_least = datetime.datetime.strptime(self.__attributes.get('at_least'), '%Y-%m-%d')
+        else:
+            at_least = datetime.datetime.strptime(self.__attributes.get('ending'), '%Y-%m-%d')
+
         conditionals = (assets['from'] <= starting) & (assets['to'] >= at_least)
         assets = assets.loc[conditionals, :]
 
