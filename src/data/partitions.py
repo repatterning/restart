@@ -55,7 +55,7 @@ class Partitions:
         ending = datetime.datetime.strptime(attributes.get('ending'), '%Y-%m-%d')
 
         # Create series
-        frame = pd.date_range(start=starting, end=ending, freq='YS'
+        frame = pd.date_range(start=starting, end=ending, freq=attributes.get('frequency')
                               ).to_frame(index=False, name='date')
         starts: pd.Series = frame['date'].apply(lambda x: x.strftime('%Y-%m-%d'))
 
