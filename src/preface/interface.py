@@ -1,5 +1,4 @@
 """Module interface.py"""
-import logging
 import typing
 
 import boto3
@@ -43,8 +42,7 @@ class Interface:
             connector=connector, region_name=s3_parameters.region_name).exc()
         attributes: dict = self.__get_attributes(connector=connector)
 
-        setup = src.preface.setup.Setup(
+        src.preface.setup.Setup(
             service=service, s3_parameters=s3_parameters).exc(reacquire=attributes['reacquire'])
-        logging.info('Successful Set Up: %s', 'Yes' if setup else 'No')
 
         return connector, s3_parameters, service, attributes
