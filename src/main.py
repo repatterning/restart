@@ -19,6 +19,8 @@ def main():
     state = src.data.interface.Interface(attributes=attributes).exc()
     if state:
         src.transfer.interface.Interface(service=service, s3_parameters=s3_parameters).exc()
+    else:
+        logger.info('Beware, require is false and excerpt is null, therefore no data acquisition activity.')
 
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
