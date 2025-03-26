@@ -74,6 +74,9 @@ class Interface:
         :return:
         """
 
+        if self.__attributes.get('excerpt') is None:
+            return pd.DataFrame()
+
         assets = assets.loc[assets['ts_id'].isin(self.__attributes.get('excerpt')), :]
 
         return assets
@@ -84,10 +87,8 @@ class Interface:
         :return:
         """
 
-        # Retrieving the codes of <level> sequences.
+        # Retrieving the codes of <level> sequences, and the details of stations that record <level> sequences.
         codes = src.data.codes.Codes().exc()
-
-        # Stations that record <level> sequences.
         stations = src.data.stations.Stations().exc()
 
         # Hence, assets; joining codes & stations, subsequently limiting by stations
@@ -106,9 +107,15 @@ class Interface:
         if not self.__attributes.get('reacquire'):
             assets = self.__specific(assets=assets.copy())
 
+        # Empty
+        if assets.empty:
+            return False
+
         # Partitions for parallel data retrieval; for parallel computing.
         partitions = src.data.partitions.Partitions(data=assets).exc(attributes=self.__attributes)
         logging.info(partitions)
 
         # Retrieving time series points
         src.data.points.Points(period=self.__attributes.get('period')).exc(partitions=partitions)
+
+        return True
