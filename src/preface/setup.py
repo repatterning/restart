@@ -1,6 +1,7 @@
 """
 Module setup.py
 """
+import sys
 
 import config
 import src.elements.s3_parameters as s3p
@@ -70,4 +71,7 @@ class Setup:
         if reacquire:
             self.__s3()
 
-        return self.__local()
+        if self.__local():
+            return True
+
+        sys.exit('Error: Set up step failure.')

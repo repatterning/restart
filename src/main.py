@@ -16,8 +16,11 @@ def main():
     logger.info(__name__)
 
     # Steps
-    src.data.interface.Interface(attributes=attributes).exc()
-    src.transfer.interface.Interface(service=service, s3_parameters=s3_parameters).exc()
+    state = src.data.interface.Interface(attributes=attributes).exc()
+    if state:
+        src.transfer.interface.Interface(service=service, s3_parameters=s3_parameters).exc()
+    else:
+        logger.info('Beware, reacquire is false and excerpt is null, therefore no data acquisition activity.')
 
     # Deleting __pycache__
     src.functions.cache.Cache().exc()
