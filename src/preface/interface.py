@@ -26,7 +26,7 @@ class Interface:
         :return:
         """
 
-        key_name = 'attributes.json'
+        key_name = 'data/restart/attributes.json'
 
         return src.s3.configurations.Configurations(connector=connector).objects(key_name=key_name)
 
